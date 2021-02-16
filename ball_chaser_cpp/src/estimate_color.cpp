@@ -26,7 +26,7 @@ public:
         RCLCPP_INFO(this->get_logger(), "Estimate color finished.");
     }
 
-// private:
+private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub1;
     double gaussian(double mu, double sigma2, double x)  // Gaussian Function
     {

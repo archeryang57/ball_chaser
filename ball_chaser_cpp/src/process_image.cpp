@@ -49,7 +49,7 @@ public:
         }
     }
 
-// private:
+private:
     int right_state = 0;
     int left_state = 0;
 
