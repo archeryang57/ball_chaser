@@ -35,7 +35,6 @@ public:
         RCLCPP_INFO(this->get_logger(), "Driving the bot in the specified velocity and direction.");
 
         // Request specified velocity and direction
-        robot_interfaces::srv::DriveToTarget srv;
         auto request = std::make_shared<robot_interfaces::srv::DriveToTarget::Request>();
         request->linear_x = lin_x;
         request->angular_z = ang_z;
@@ -61,8 +60,8 @@ public:
     void process_image_callback(sensor_msgs::msg::Image::SharedPtr img)
     {
         RCLCPP_INFO(this->get_logger(), "Entering the process_image_callback function...");
-        int white_pixel = 200;
-        int black_pixel = 75;
+        // int white_pixel = 200;
+        // int black_pixel = 75;
         
         int height = img->height; // image height, that is, number of rows
         int width = img->width; // image width, that is, number of columns
