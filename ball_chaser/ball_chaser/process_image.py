@@ -80,7 +80,7 @@ class ProcessImage(Node):
 
         self.get_logger().info(f"size: {size}")
 
-        if size == 0:
+        if size <= 50:
             # Will request a stop when there's no white ball seen by the camera
             self.drive_robot(0.0, 0.0)  # This request a stop
             self.left_state = 0
