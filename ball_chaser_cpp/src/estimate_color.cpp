@@ -6,20 +6,22 @@
 #include <vector>
 
 #include <math.h>
-using std::placeholders::_1;
 using namespace std;
+using namespace rclcpp;
+using namespace robot_interfaces::srv;
+using namespace sensor_msgs::msg;
 
-class EstimateColor: public rclcpp::Node {
+class EstimateColor: public Node {
 public:
     EstimateColor(): Node("estimate_color") {
         // ros::Subscriber sub1 = n.subscribe("/camera/rgb/image_raw", 10, process_image_callback);
         RCLCPP_INFO(this->get_logger(), "Will Subscribe to /image_raw topic for estimate color");
 
-        sub1 = this->create_subscription<sensor_msgs::msg::Image>("/image_raw", 10,
-                    std::bind(
+        sub1 = this->create_subscription<Image>("/image_raw", 10,
+                    bind(
                         &EstimateColor::estimate_color_callback, 
                         this, 
-                        std::placeholders::_1
+                        placeholders::_1
                     )
                 );
 
@@ -27,7 +29,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub1;
+    Subscription<Image>::SharedPtr sub1;
     double gaussian(double mu, double sigma2, double x)  // Gaussian Function
     {
         //Use mu, sigma2 (sigma squared), and x to code the 1-dimensional Gaussian
@@ -43,7 +45,7 @@ private:
     }
 
     // This callback function continuously executes and reads the image data
-    void estimate_color_callback(sensor_msgs::msg::Image::SharedPtr img)
+    void estimate_color_callback(Image::SharedPtr img)
     {
 
         int height = img->height; // image height, that is, number of rows
@@ -118,10 +120,10 @@ private:
 int main(int argc, char** argv)
 {
     // Initialize the process_image node and create a handle to it
-    rclcpp::init(argc, argv);
+    init(argc, argv);
     auto node = std::make_shared<EstimateColor>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
+    spin(node);
+    shutdown();
 
     return 0;
 }
