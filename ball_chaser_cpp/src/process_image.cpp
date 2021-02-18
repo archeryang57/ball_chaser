@@ -90,9 +90,9 @@ public:
 
         // TODO:
         // (1) Loop through each pixel in the image and check if there's a bright white one
-        int maxRed = 40;
-        int minGreen = 120;  // 49;
-        int maxBlue = 98;  // 109;
+        int maxRed = 90;
+        int minGreen = 100;  // 49;
+        int maxBlue = 120;  // 109;
         float turnForce = 0.5;    // max is 2.6
         float forwardForce = 0.1; // max is 0.21
 
@@ -119,12 +119,10 @@ public:
         // size = 60;
         // =============================
 
-        if (size <= 50){
+        if (size <= 20){
             // Will request a stop when there's no white ball seen by the camera
-            if( isAction ) {
-                this->drive_robot(0.0, 0.0);  // This request a stop
-                isAction = false;
-            }
+            this->drive_robot(0.0, 0.0);  // This request a stop
+            // isAction = false;
             left_state = 0;
             right_state = 0;
         }

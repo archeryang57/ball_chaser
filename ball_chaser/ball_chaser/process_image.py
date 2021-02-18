@@ -14,7 +14,7 @@ class ProcessImage(Node):
         self.get_logger().info("Hello process_image")
 
         # * 建立 camera Subscription
-        self.create_subscription(Image, "/camera/image", self.callback_func, 10)
+        self.create_subscription(Image, "/image_raw", self.callback_func, 10)
 
     def drive_robot(self, lin_x,  ang_z):
         # TODO: Request a service and pass the velocities to it to drive the robot
@@ -56,9 +56,9 @@ class ProcessImage(Node):
 
         # TODO:
         # (1) Loop through each pixel in the image and check if there's a bright white one
-        maxRed = 37  #60
-        minGreen = 49 # 110
-        maxBlue = 109 #120
+        maxRed = 90  #60
+        minGreen = 100 # 110
+        maxBlue = 120
         turnForce = 0.5  # max is 2.6
         forwardForce = 0.1  # max is 0.21
 
@@ -80,7 +80,7 @@ class ProcessImage(Node):
 
         self.get_logger().info(f"size: {size}")
 
-        if size <= 50:
+        if size <= 20:
             # Will request a stop when there's no white ball seen by the camera
             self.drive_robot(0.0, 0.0)  # This request a stop
             self.left_state = 0
