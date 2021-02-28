@@ -66,8 +66,8 @@ class ProcessImage(Node):
         maxRed = 90  #60
         minGreen = 100 # 110
         maxBlue = 120
-        maxTurnForce = 2.6
-        maxForwardForce = 0.21
+        #maxTurnForce = 2.6
+        #maxForwardForce = 0.21
         turnForce = 0.5  # max is 2.6
         forwardForce = 0.1  # max is 0.21
 
