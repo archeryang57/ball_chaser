@@ -24,7 +24,8 @@ setup(
             "my_subscription=ball_chaser.my_subscription:main",
             "process_image=ball_chaser.process_image:main",
             "estimate_color=ball_chaser.estimate_color:main",
-            "drive_bot=ball_chaser.drive_bot:main"
+            "drive_bot=ball_chaser.drive_bot:main",
+            "test_ball=ball_chaser.test_ball:main"
         ],
     },
 )

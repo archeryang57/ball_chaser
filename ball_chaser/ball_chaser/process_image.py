@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+from collections import deque
+from imutils.video import VideoStream
+import imutils
+import cv2
+import cv_bridge
+# import time
+
 import rclpy
 import numpy as np
 from rclpy.node import Node
@@ -59,6 +66,8 @@ class ProcessImage(Node):
         maxRed = 90  #60
         minGreen = 100 # 110
         maxBlue = 120
+        maxTurnForce = 2.6
+        maxForwardForce = 0.21
         turnForce = 0.5  # max is 2.6
         forwardForce = 0.1  # max is 0.21
 
