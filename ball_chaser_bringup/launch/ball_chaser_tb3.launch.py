@@ -7,7 +7,11 @@ def generate_launch_description():
     camera_node = Node(
         package="v4l2_camera",
         executable="v4l2_camera_node",
-        parameters=[{"image_size": [160,90]}]
+        parameters=[{"image_size": [160,90]}],
+        remappings=[
+            ("/image_raw", "/camera/image")
+        ],
+        output='screen',
     )
 
     drive_bot_node = Node(
