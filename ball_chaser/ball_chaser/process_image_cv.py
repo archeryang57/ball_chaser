@@ -81,19 +81,18 @@ class ProcessImageCV(Node):
         # a series of dilations and erosions to remove any small
         # blobs left in the mask
         mask = cv2.inRange(hsv, self.greenLower, self.greenUpper)
-        mask = cv2.erode(mask, None, iterations=2)
-        mask = cv2.dilate(mask, None, iterations=2)
+        # mask = cv2.erode(mask, None, iterations=2)
+        # mask = cv2.dilate(mask, None, iterations=2)
 
         # find contours in the mask and initialize the current
         # (x, y) center of the ball
-        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-            cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
         center = (centerX + 0.0 , centerY + 0.0)
         
-        (dX, dY) = (0.0, 0.0)
         ((x, y), radius) = ((0.0, 0.0), 0.0) 
-        M = 0
+        # (dX, dY) = (0.0, 0.0)
+        # M = 0
 
         # only proceed if at least one contour was found
         if len(cnts) > 0:
@@ -111,8 +110,7 @@ class ProcessImageCV(Node):
 
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
-                cv2.circle(frame, (int(x), int(y)), int(radius),
-                     (0, 255, 255), 2)
+                cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
                 # cv2.circle(frame, center, 5, (0, 0, 255), -1)
                 # self.pts.appendleft(center)
                 
@@ -174,6 +172,7 @@ class ProcessImageCV(Node):
             self.get_logger().info(f"radius:({round(radius,2)}), Ball Center:({center}), Forward/Turn: {round(forwardForce,2)}/{round(turnForce,2)}")
         else:
             self.drive_robot (0.0, self.direction)
+            # keep searching direction for a while
             self.direction = self.direction - 0.01 if self.direction > 0 else self.direction + 0.01
             if abs(self.direction) <= 0.2:
                 self.direction = 0.0
