@@ -103,7 +103,7 @@ class ProcessImageCV(Node):
             ((x, y), radius) = cv2.minEnclosingCircle(c)
 
             # only proceed if the radius meets a minimum size
-            if radius >= 2:
+            if radius >= 5:
                 M = cv2.moments(c)
                 if M["m00"] != 0:
                     center = ( int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
