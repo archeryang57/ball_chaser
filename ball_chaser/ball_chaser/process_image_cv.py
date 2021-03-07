@@ -29,7 +29,7 @@ class ProcessImageCV(Node):
         self.greenUpper = (64, 255, 255)
         self.pts = deque(maxlen=32)
         self.counter = 0
-        self.direction = ""
+        self.direction = 0.0
         self.maxTurnForce = 2.6
         self.maxForwardForce = 0.21
 
@@ -45,18 +45,13 @@ class ProcessImageCV(Node):
 
     def drive_robot(self, lin_x,  ang_z):
         # TODO: Request a service and pass the velocities to it to drive the robot
-        self.get_logger().info(f"Driving the bot forward({lin_x}, turn({ang_z})")
+        # self.get_logger().info(f"Driving the bot forward({lin_x}, turn({ang_z})")
 
         motor_command = Twist()
         motor_command.linear.x = lin_x
         motor_command.angular.z = ang_z
         # publish message to /cmd_vel topic
         self.motor_command_publisher.publish(motor_command)
-
-
-    def drive_bot_callback(self, future):
-        # self.get_logger().info("Client call finished.")
-        pass
 
     # * 建立 call back function, 撰寫執行動作
     def callback_func(self, msgimg: CompressedImage):
@@ -86,8 +81,8 @@ class ProcessImageCV(Node):
         # a series of dilations and erosions to remove any small
         # blobs left in the mask
         mask = cv2.inRange(hsv, self.greenLower, self.greenUpper)
-        # mask = cv2.erode(mask, None, iterations=2)
-        # mask = cv2.dilate(mask, None, iterations=2)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
 
         # find contours in the mask and initialize the current
         # (x, y) center of the ball
@@ -97,7 +92,7 @@ class ProcessImageCV(Node):
         center = (centerX + 0.0 , centerY + 0.0)
         
         (dX, dY) = (0.0, 0.0)
-        ((x, y), radius) = ((0, 0), 0) 
+        ((x, y), radius) = ((0.0, 0.0), 0.0) 
         M = 0
 
         # only proceed if at least one contour was found
@@ -114,13 +109,12 @@ class ProcessImageCV(Node):
                 if M["m00"] != 0:
                     center = ( int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
-                self.get_logger().info(f"radius:({radius}), Screen Center:({centerX},{centerY}),  Ball Center:({center})")
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
-                # cv2.circle(frame, (int(x), int(y)), int(radius),
-                #     (0, 255, 255), 2)
+                cv2.circle(frame, (int(x), int(y)), int(radius),
+                     (0, 255, 255), 2)
                 # cv2.circle(frame, center, 5, (0, 0, 255), -1)
-                self.pts.appendleft(center)
+                # self.pts.appendleft(center)
                 
         # # loop over the set of tracked points
         # for i in np.arange(1, len(self.pts)):
@@ -165,17 +159,25 @@ class ProcessImageCV(Node):
         if radius > 0:
             # self.maxForwardForce = 0.21
             # self.maxTurnForce = 2.6
-            forwardFoce = self.maxForwardForce - ( ( radius * 2 ) / width * self.maxForwardForce ) - 0.03
-            forwardFoce = 0.0 if forwardFoce < 0.0 else forwardFoce
+            forwardForce = self.maxForwardForce - ( ( radius * 2 ) / width * self.maxForwardForce )
+            forwardForce = 0.0 if forwardForce < 0.0 else forwardForce
 
-            inCenterZone = True if abs(center[0]-centerX) < 30 else False
+            inCenterZone = True if abs(center[0]-centerX) < 20 else False
             if inCenterZone:
                 turnForce = 0.0
             else:
                 turnForce = ( (center[0] - centerX) / width * 2 ) * (self.maxTurnForce-0.5)
-            self.drive_robot (forwardFoce, turnForce)
+                self.direction = turnForce
+            
+            self.drive_robot (forwardForce, turnForce)
+
+            self.get_logger().info(f"radius:({round(radius,2)}), Ball Center:({center}), Forward/Turn: {round(forwardForce,2)}/{round(turnForce,2)}")
         else:
-            self.drive_robot (0.0, 0.0)
+            self.drive_robot (0.0, self.direction)
+            self.direction = self.direction - 0.01 if self.direction > 0 else self.direction + 0.01
+            if abs(self.direction) <= 0.2:
+                self.direction = 0.0
+
 
         return 0
 
