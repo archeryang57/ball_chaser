@@ -10,29 +10,34 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 
 class TestBall(Node):
     def __init__(self):
         super().__init__("test_ball")
         self.get_logger().info("Hello Subscription")
 
-        # init the environment
+        # init the OpenCV dependance environment
         self.bridge = cv_bridge.CvBridge()
-        self.greenLower = (29, 86, 6)
+        #self.greenLower = (29, 86, 6)
+        self.greenLower = (31, 120, 20)
         self.greenUpper = (64, 255, 255)
         self.pts = deque(maxlen=32)
         self.counter = 0
         self.direction = ""
 
         # * 建立 Timer/Subscription ( 傳入 callback function )
-        self.create_subscription(Image, "image_raw", self.callback_func, 10)
+        # self.create_subscription(Image, "image_raw", self.callback_func, 10)
+        self.create_subscription(CompressedImage, "/image_raw/compressed", self.callback_func, 10)
 
         # create publisher to public processed image
         self.publichser_ = self.create_publisher(Image, "ball_image", 10)
 
     # * 建立 call back function, 撰寫執行動作
-    def callback_func(self, msgimg):
-        frame = self.bridge.imgmsg_to_cv2(msgimg, "bgr8")
+    def callback_func(self, msgimg: CompressedImage):
+        np_arr = np.fromstring(msgimg.data.tostring(), np.uint8)
+        frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        # frame = self.bridge.imgmsg_to_cv2(msgimg, "bgr8")
 
         frame = cv2.flip(frame, 1)
 
@@ -40,6 +45,12 @@ class TestBall(Node):
         # then we have reached the end of the video
         if frame is None:
             return 1
+
+        # height = 320 # msgimg.height # image height, that is, number of rows  640
+        # width = 200 # msgimg.width # image width, that is, number of columns  480
+        height, width = frame.shape[:2]
+        centerX = width /2
+        centerY = height /2
 
         # resize the frame, blur it, and convert it to the HSV
         # color space
@@ -70,9 +81,10 @@ class TestBall(Node):
             ((x, y), radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            self.get_logger().info(f"radius:({radius}), Screen Center:({centerX},{centerY}),  Ball Center:({center})")
 
             # only proceed if the radius meets a minimum size
-            if radius >= 1:
+            if radius > 2:
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
                 cv2.circle(frame, (int(x), int(y)), int(radius),

@@ -23,9 +23,11 @@ setup(
             "my_publisher=ball_chaser.my_publisher:main",
             "my_subscription=ball_chaser.my_subscription:main",
             "process_image=ball_chaser.process_image:main",
+            "process_image_cv=ball_chaser.process_image_cv:main",
             "estimate_color=ball_chaser.estimate_color:main",
             "drive_bot=ball_chaser.drive_bot:main",
-            "test_ball=ball_chaser.test_ball:main"
+            "test_ball=ball_chaser.test_ball:main",
+            "range_detector=ball_chaser.range_detector:main"
         ],
     },
 )

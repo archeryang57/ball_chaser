@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-from collections import deque
-from imutils.video import VideoStream
-import imutils
-import cv2
-import cv_bridge
-# import time
 
 import rclpy
 import numpy as np
@@ -23,9 +17,12 @@ class ProcessImage(Node):
         # * 建立 camera Subscription
         self.create_subscription(Image, "/image_raw", self.callback_func, 10)
 
+        self.publichser_ = self.create_publisher(Image, "ball_image", 10)
+
+
     def drive_robot(self, lin_x,  ang_z):
         # TODO: Request a service and pass the velocities to it to drive the robot
-        self.get_logger().info("Driving the bot in the specified velocity and direction.")
+        self.get_logger().info(f"Driving the bot forward({lin_x}, turn({ang_z})")
 
         # Request specified velocity and direction
         req = DriveToTarget.Request()
@@ -87,8 +84,6 @@ class ProcessImage(Node):
         # for k in range(0, size):
         #     sum += white_position[k]
 
-        self.get_logger().info(f"size: {size}")
-
         if size <= 20:
             # Will request a stop when there's no white ball seen by the camera
             self.drive_robot(0.0, 0.0)  # This request a stop
@@ -111,6 +106,7 @@ class ProcessImage(Node):
                 self.left_state = 0
                 self.right_state = 0
         #self.get_logger().info(f"left_state: {self.left_state}, right_state: {self.right_state}")
+
 
 def main(args=None):
     #  初始化 ROS
