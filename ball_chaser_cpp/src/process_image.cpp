@@ -90,10 +90,10 @@ public:
 
         // TODO:
         // (1) Loop through each pixel in the image and check if there's a bright white one
-        int maxRed = 90;
-        int minGreen = 100;  // 49;
-        int maxBlue = 120;  // 109;
-        float turnForce = 0.5;    // max is 2.6
+        int maxRed = 60;
+        int minGreen = 120;  // 49;
+        int maxBlue = 130;  // 109;
+        float turnForce = 1.2;    // max is 2.6
         float forwardForce = 0.1; // max is 0.21
 
         for (int i = 0; i < height * step; i += 3) {
