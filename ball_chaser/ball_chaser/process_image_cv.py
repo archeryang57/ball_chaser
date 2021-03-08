@@ -161,9 +161,9 @@ class ProcessImageCV(Node):
             # self.maxForwardForce = 0.21
             # self.maxTurnForce = 2.6
             
-            # 
+            # 計算前進驅動力, 最大前進驅動力 - ((半徑*2) /寬度  * 最大前進驅動力)
             forwardForce = self.maxForwardForce - ( ( radius * 2 ) / width * self.maxForwardForce )
-            # 若計算值小於 0, 前進力量就設為 0
+            # 若計算值小於 0, 驅動力就設為 0, 不做向後退動作 (有時直徑會超過畫面寬度)
             forwardForce = 0.0 if forwardForce < 0.0 else forwardForce
 
             # 計算物件是否在中心區域( 物件中心-畫面中心 +- 20 點 )
@@ -171,14 +171,14 @@ class ProcessImageCV(Node):
             if inCenterZone:  # 在中心區域不做旋轉
                 turnForce = 0.0
             else:
-                # 計算旋轉力量 ( (物件中心-畫面中心) / 畫面寬度 * 2 ) * 最大旋轉力量
+                # 計算旋轉驅動力 ( (物件中心-畫面中心) / 畫面寬度 * 2 ) * 最大旋轉力量
                 # (物件在最旁時除以寬度約是 0.5, 乘 2 時會是 1, 物件中心在左右時, 正好會取得左右轉所對應的正負值 )
                 turnForce = ( (center[0] - centerX) / width * 2 ) * (self.maxTurnForce-0.5)
                 
                 # 保存旋轉力數值, 供物件跑出畫面時持續尋找
                 self.direction = turnForce
             
-            # 送出驅動力量數值
+            # 送出驅動力數值
             self.drive_robot (forwardForce, turnForce)
 
             self.get_logger().info(f"radius:({round(radius,2)}), Ball Center:({center}), Forward/Turn: {round(forwardForce,2)}/{round(turnForce,2)}")
