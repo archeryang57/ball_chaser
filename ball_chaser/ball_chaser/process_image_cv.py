@@ -95,7 +95,7 @@ class ProcessImageCV(Node):
         # (dX, dY) = (0.0, 0.0)
         # M = 0
 
-       if len(cnts) > 0:
+        if len(cnts) > 0:
             # 取得最大的輪廓
             c = max(cnts, key=cv2.contourArea)
             # 取得包含輪廓的最小圓形外框((中心點x,y), 半徑)
@@ -103,9 +103,10 @@ class ProcessImageCV(Node):
 
             # only proceed if the radius meets a minimum size
             if radius >= 5:
-                M = cv2.moments(c)
-                if M["m00"] != 0:
-                    center = ( int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                # M = cv2.moments(c)
+                # if M["m00"] != 0:
+                #     center = ( int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                center = (x, y)
 
                 # 畫圓形外框
                 cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
@@ -161,7 +162,7 @@ class ProcessImageCV(Node):
             # self.maxForwardForce = 0.21
             # self.maxTurnForce = 2.6
             
-            # 計算前進驅動力, 最大前進驅動力 - ((半徑*2) /寬度  * 最大前進驅動力)
+            # 計算前進驅動力: 最大前進驅動力 - ((半徑*2) /寬度  * 最大前進驅動力)
             forwardForce = self.maxForwardForce - ( ( radius * 2 ) / width * self.maxForwardForce )
             # 若計算值小於 0, 驅動力就設為 0, 不做向後退動作 (有時直徑會超過畫面寬度)
             forwardForce = 0.0 if forwardForce < 0.0 else forwardForce
