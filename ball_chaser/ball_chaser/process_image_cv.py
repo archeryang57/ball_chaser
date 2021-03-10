@@ -48,6 +48,14 @@ class ProcessImageCV(Node):
         motor_command.angular.z = ang_z
         # publish message to /cmd_vel topic
         self.motor_command_publisher.publish(motor_command)
+        
+#         # Request specified velocity and direction
+#         req = DriveToTarget.Request()
+#         req.linear_x = lin_x
+#         req.angular_z = ang_z
+
+#         # Call the command_robot service and pass the specified velocity and direction.
+#         client_ = self.create_client(DriveToTarget, '/ball_chaser/command_robot')
 
     # * 建立 call back function, 撰寫執行動作
     def callback_func(self, msgimg: CompressedImage):
@@ -58,7 +66,7 @@ class ProcessImageCV(Node):
         np_arr = np.fromstring(msgimg.data.tostring(), np.uint8)
         frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-        # 畫面做左右鏡射處理
+        # 畫面做水平鏡射處理
         frame = cv2.flip(frame, 1)
 
         # 取得畫面的高度及寬度
