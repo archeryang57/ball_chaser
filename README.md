@@ -1,5 +1,4 @@
-# ball_chaser
-ball chaser for ROS2 foxy.(python and c++ versions)
+# ball chaser for ROS2 foxy(python and c++ versions)
 
 * ball_chaser
 
