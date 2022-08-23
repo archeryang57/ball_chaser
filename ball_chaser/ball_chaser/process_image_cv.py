@@ -112,8 +112,8 @@ class ProcessImageCV(Node):
             mask = cv2.inRange(hsv, self.greenLower, self.greenUpper)
         
         # 將影像遮罩做腐蝕及膨脹處理, 以去掉影像毛邊.
-        # mask = cv2.erode(mask, None, iterations=2)
-        # mask = cv2.dilate(mask, None, iterations=2)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
 
         # 取得 mask中的影像輪廓
         cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -122,8 +122,6 @@ class ProcessImageCV(Node):
         # 初始化變數.
         center = (int(centerX), int(centerY))
         ((x, y), radius) = ((0.0, 0.0), 0.0) 
-        # (dX, dY) = (0.0, 0.0)
-        # M = 0
 
         if len(cnts) > 0:
             # 取得最大的輪廓
@@ -133,9 +131,6 @@ class ProcessImageCV(Node):
 
             # only proceed if the radius meets a minimum size
             if radius >= 5:
-                # M = cv2.moments(c)
-                # if M["m00"] != 0:
-                #     center = ( int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
                 center = (int(x), int(y))
 
                 # 畫圓形外框
