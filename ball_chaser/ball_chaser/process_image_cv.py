@@ -28,8 +28,8 @@ class ProcessImageCV(Node):
         self.pts = deque(maxlen=32)
         self.counter = 0
         self.direction = 0.0
-        self.maxTurnForce = 2.6
-        self.maxForwardForce = 0.21
+        self.maxTurnForce = 3.6     # it is better to get from dc_motor
+        self.maxForwardForce = 0.35 # it is better to get from dc_motor
         self.str_direction = ""
 
         # check if support GPU
@@ -55,7 +55,7 @@ class ProcessImageCV(Node):
         # publish message to /cmd_vel topic
         self.motor_command_publisher.publish(motor_command)
         
-#         # Request specified velocity and direction
+#         # drive robot with ACTION
 #         req = DriveToTarget.Request()
 #         req.linear_x = lin_x
 #         req.angular_z = ang_z
@@ -73,10 +73,7 @@ class ProcessImageCV(Node):
         # np_arr = np.fromstring(msgimg.data.tostring(), np.uint8)
         # frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-        # 取得畫面的高度及寬度
-        # height = msgimg.height # image height, that is, number of rows  640
-        # width = msgimg.width # image width, that is, number of columns  480
-        
+        # 取得畫面的高度及寬度        
         # frame.shape example:  ( 1080, 1920, 3 ) ( height, width, color )
         height, width = frame.shape[:2]
         
@@ -185,8 +182,8 @@ class ProcessImageCV(Node):
 
         # 若有找到符合物件, 則計算驅動力
         if radius >= 5:
-            # self.maxForwardForce = 0.21
-            # self.maxTurnForce = 2.6
+            # self.maxForwardForce = 0.35
+            # self.maxTurnForce = 3.6
             # radius has 20 forward steps
             # 計算前進驅動力: 最大前進驅動力 - ((半徑*2) /寬度  * 最大前進驅動力)
             # forwardForce = self.maxForwardForce - ( ( radius * 2 ) / width * self.maxForwardForce )
